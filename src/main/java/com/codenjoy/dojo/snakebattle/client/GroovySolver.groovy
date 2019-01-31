@@ -14,12 +14,13 @@ class GroovySolver implements Solver<Board> {
     private Dice dice
     private Board board
     private int furyCount = 0
+    private Direction lastDirection = null
 
     GroovySolver(Dice dice) {
         this.dice = dice;
     }
 
-    def blackList = [new PointImpl(0,0)]
+    def blackList = [[20,21], [21,21], [22,21]]
 
     Direction getCurrentDirection() {
 
@@ -62,7 +63,7 @@ class GroovySolver implements Solver<Board> {
         def res = [Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT]
         def removed = []
 
-        def curr = getCurrentDirection()
+        def curr = lastDirection ?: getCurrentDirection()
 
         switch (curr) {
             case Direction.RIGHT: res.remove(Direction.LEFT); break
@@ -135,160 +136,11 @@ class GroovySolver implements Solver<Board> {
         }
     }
 
-    Direction correct(Direction direction) {
-
-//        if (furyCount--) {
-//            return direction
-//        }
-        println "Correct from $direction)"
-
-        switch (direction) {
-            case Direction.LEFT:
-                if (board.isAt(board.me.x - 1, board.me.y, Elements.STONE, Elements.WALL, Elements.START_FLOOR,
-//                        Elements.BODY_HORIZONTAL,
-//                        Elements.BODY_VERTICAL,
-//                        Elements.BODY_LEFT_DOWN,
-//                        Elements.BODY_LEFT_UP,
-//                        Elements.BODY_RIGHT_DOWN,
-//                        Elements.BODY_RIGHT_UP,
-
-                        Elements.ENEMY_HEAD_DOWN,
-                        Elements.ENEMY_HEAD_LEFT,
-                        Elements.ENEMY_HEAD_RIGHT,
-                        Elements.ENEMY_HEAD_UP,
-                        Elements.ENEMY_HEAD_DEAD,   // этот раунд противник проиграл
-                        Elements.ENEMY_HEAD_EVIL,   // противник скушал таблетку ярости
-                        Elements.ENEMY_HEAD_FLY,    // противник скушал таблетку полета
-                        Elements.ENEMY_HEAD_SLEEP,  // змейка ожидает начала раунда
-
-                        Elements.ENEMY_TAIL_END_DOWN,
-                        Elements.ENEMY_TAIL_END_LEFT,
-                        Elements.ENEMY_TAIL_END_UP,
-                        Elements.ENEMY_TAIL_END_RIGHT,
-                        Elements.ENEMY_TAIL_INACTIVE,
-
-                        Elements.ENEMY_BODY_HORIZONTAL,
-                        Elements.ENEMY_BODY_VERTICAL,
-                        Elements.ENEMY_BODY_LEFT_DOWN,
-                        Elements.ENEMY_BODY_LEFT_UP,
-                        Elements.ENEMY_BODY_RIGHT_DOWN,
-                        Elements.ENEMY_BODY_RIGHT_UP)) {
-                    println(board.getAllAt(board.me.x- 1, board.me.y))
-                    return correct(Direction.UP)
-                }
-                break
-            case Direction.RIGHT:
-                if (board.isAt(board.me.x + 1, board.me.y, Elements.STONE, Elements.WALL, Elements.START_FLOOR,
-//                        Elements.BODY_HORIZONTAL,
-//                        Elements.BODY_VERTICAL,
-//                        Elements.BODY_LEFT_DOWN,
-//                        Elements.BODY_LEFT_UP,
-//                        Elements.BODY_RIGHT_DOWN,
-//                        Elements.BODY_RIGHT_UP,
-
-                        Elements.ENEMY_HEAD_DOWN,
-                        Elements.ENEMY_HEAD_LEFT,
-                        Elements.ENEMY_HEAD_RIGHT,
-                        Elements.ENEMY_HEAD_UP,
-                        Elements.ENEMY_HEAD_DEAD,   // этот раунд противник проиграл
-                        Elements.ENEMY_HEAD_EVIL,   // противник скушал таблетку ярости
-                        Elements.ENEMY_HEAD_FLY,    // противник скушал таблетку полета
-                        Elements.ENEMY_HEAD_SLEEP,  // змейка ожидает начала раунда
-
-                        Elements.ENEMY_TAIL_END_DOWN,
-                        Elements.ENEMY_TAIL_END_LEFT,
-                        Elements.ENEMY_TAIL_END_UP,
-                        Elements.ENEMY_TAIL_END_RIGHT,
-                        Elements.ENEMY_TAIL_INACTIVE,
-
-                        Elements.ENEMY_BODY_HORIZONTAL,
-                        Elements.ENEMY_BODY_VERTICAL,
-                        Elements.ENEMY_BODY_LEFT_DOWN,
-                        Elements.ENEMY_BODY_LEFT_UP,
-                        Elements.ENEMY_BODY_RIGHT_DOWN,
-                        Elements.ENEMY_BODY_RIGHT_UP)) {
-                    println(board.getAllAt(board.me.x + 1, board.me.y))
-                    return correct(Direction.DOWN)
-                }
-                break
-            case Direction.UP:
-                if (board.isAt(board.me.x, board.me.y + 1, Elements.STONE, Elements.WALL, Elements.START_FLOOR,
-//                        Elements.BODY_HORIZONTAL,
-//                        Elements.BODY_VERTICAL,
-//                        Elements.BODY_LEFT_DOWN,
-//                        Elements.BODY_LEFT_UP,
-//                        Elements.BODY_RIGHT_DOWN,
-//                        Elements.BODY_RIGHT_UP,
-
-                        Elements.ENEMY_HEAD_DOWN,
-                        Elements.ENEMY_HEAD_LEFT,
-                        Elements.ENEMY_HEAD_RIGHT,
-                        Elements.ENEMY_HEAD_UP,
-                        Elements.ENEMY_HEAD_DEAD,   // этот раунд противник проиграл
-                        Elements.ENEMY_HEAD_EVIL,   // противник скушал таблетку ярости
-                        Elements.ENEMY_HEAD_FLY,    // противник скушал таблетку полета
-                        Elements.ENEMY_HEAD_SLEEP,  // змейка ожидает начала раунда
-
-                        Elements.ENEMY_TAIL_END_DOWN,
-                        Elements.ENEMY_TAIL_END_LEFT,
-                        Elements.ENEMY_TAIL_END_UP,
-                        Elements.ENEMY_TAIL_END_RIGHT,
-                        Elements.ENEMY_TAIL_INACTIVE,
-
-                        Elements.ENEMY_BODY_HORIZONTAL,
-                        Elements.ENEMY_BODY_VERTICAL,
-                        Elements.ENEMY_BODY_LEFT_DOWN,
-                        Elements.ENEMY_BODY_LEFT_UP,
-                        Elements.ENEMY_BODY_RIGHT_DOWN,
-                        Elements.ENEMY_BODY_RIGHT_UP)) {
-                    println(board.getAllAt(board.me.x, board.me.y + 1))
-                    return correct(Direction.RIGHT)
-                }
-                break
-            case Direction.DOWN:
-                if (board.isAt(board.me.x, board.me.y - 1, Elements.STONE, Elements.WALL, Elements.START_FLOOR,
-//                        Elements.BODY_HORIZONTAL,
-//                        Elements.BODY_VERTICAL,
-//                        Elements.BODY_LEFT_DOWN,
-//                        Elements.BODY_LEFT_UP,
-//                        Elements.BODY_RIGHT_DOWN,
-//                        Elements.BODY_RIGHT_UP,
-
-                        Elements.ENEMY_HEAD_DOWN,
-                        Elements.ENEMY_HEAD_LEFT,
-                        Elements.ENEMY_HEAD_RIGHT,
-                        Elements.ENEMY_HEAD_UP,
-                        Elements.ENEMY_HEAD_DEAD,   // этот раунд противник проиграл
-                        Elements.ENEMY_HEAD_EVIL,   // противник скушал таблетку ярости
-                        Elements.ENEMY_HEAD_FLY,    // противник скушал таблетку полета
-                        Elements.ENEMY_HEAD_SLEEP,  // змейка ожидает начала раунда
-
-                        Elements.ENEMY_TAIL_END_DOWN,
-                        Elements.ENEMY_TAIL_END_LEFT,
-                        Elements.ENEMY_TAIL_END_UP,
-                        Elements.ENEMY_TAIL_END_RIGHT,
-                        Elements.ENEMY_TAIL_INACTIVE,
-
-                        Elements.ENEMY_BODY_HORIZONTAL,
-                        Elements.ENEMY_BODY_VERTICAL,
-                        Elements.ENEMY_BODY_LEFT_DOWN,
-                        Elements.ENEMY_BODY_LEFT_UP,
-                        Elements.ENEMY_BODY_RIGHT_DOWN,
-                        Elements.ENEMY_BODY_RIGHT_UP)) {
-
-                    println(board.getAllAt(board.me.x, board.me.y - 1))
-                    return correct(Direction.LEFT)
-                }
-                break
-        }
-
-        return direction
-    }
-
     @Override
     String get(Board board) {
 
         this.board = board
+        def res = null
         if (board.isGameOver()) return ""
 
         def direction = getApple()
@@ -299,10 +151,13 @@ class GroovySolver implements Solver<Board> {
         println "My length ${length()}"
 
         if (allowed.contains(direction)) {
-            return direction
+            res = direction
         } else {
-            return allowed.find()
+            res = allowed.find()
         }
+
+        lastDirection = res
+        res
         //def element = getElementByDirection(direction)
 
         //if (element == Elements.FURY_PILL) {
